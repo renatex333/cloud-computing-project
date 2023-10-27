@@ -1,0 +1,46 @@
+https://github.com/renatex333/Projeto-Computacao-Nuvem/blob/main/terraform/main.tf
+https://aws.amazon.com/pt/blogs/architecture/what-to-consider-when-selecting-a-region-for-your-workloads/
+https://calculator.aws/#/addService
+https://developer.hashicorp.com/terraform/tutorials/aws-get-started/aws-variables
+https://registry.terraform.io/providers/hashicorp/aws/latest/docs
+https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc
+
++ EC2
+-> Nome: nome
+-> Tag
+-> AMI: Wordpress Certified By Bitnami and Automattic
+-> Tipo: t2.micro
+-> Par de chaves: tem que criar antes e adicionar aqui
+-> VPC: tem que criar antes
+-> Security groups: tem que criar antes
++ Auto Scalling Group
+-> Nome: nome
+-> Tag
+-> Modelo de execução: tem que criar antes
+->
+->
+-> 
+->
+->
+-> 
+->
+->
+-> 
+->
+->
+-> 
+->
+->
+-> 
+->
+->
++ Modelo de execução Auto Scaling Group
+-> Nome: nome
+-> Tag
+-> AMI: mesma do EC2
+-> Tipo de instância: mesma do EC2
+-> Par de chaves: mesma do EC2
+-> Subrede:
+-> Security group:
+-> 
+->
