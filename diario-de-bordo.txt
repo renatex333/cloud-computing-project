@@ -7,7 +7,8 @@ https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc
 
 ORDEM DE CRIAÇÃO
 
-VPC -> Subnet -> Security Group -> Auto Scaling Group (Launch Template) (Criar com IP público se precisar) -> EC2 -> ALB Target Group (Configurar os Health checks) (Já apontando para as instâncias)
+VPC -> Subnets públicas para EC2 -> Subnet privada RDS -> Security Group -> Auto Scaling Group (Launch Template) (Criar com IP público se precisar) -> EC2 -> ALB Target Group (Configurar os Health checks) (Já apontando para as instâncias)
+-> ALB -> RDS -> Conexão com as EC2 criadas -> Bucket S3 para guardar estado do Terraform
 
 + EC2
 -> Nome: nome
