@@ -5,7 +5,7 @@ resource "aws_autoscaling_group" "main" {
   desired_capacity          = 2
   health_check_grace_period = 300
   health_check_type         = "ELB"
-  vpc_zone_identifier       = var.public_subnet_ids
+  vpc_zone_identifier       = values(var.public_subnet_ids)
   placement_group           = var.placement_group_id
   
   launch_template {

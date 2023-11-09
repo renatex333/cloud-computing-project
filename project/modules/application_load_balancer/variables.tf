@@ -9,6 +9,6 @@ variable "security_group_ids" {
 }
 
 variable "subnet_ids" {
-  type        = list(string)
+  type        = map(string)
   description = "List of subnet IDs to assign to the ALB"
 }

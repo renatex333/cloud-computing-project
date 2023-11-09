@@ -81,7 +81,7 @@ module "route_table" {
 module "route_table_association" {
   source           = "./modules/subnet_route_table_association"
   route_table_id   = module.route_table.route_table_id
-  subnet_ids       = toset(module.subnets.public_subnet_ids)
+  subnet_ids       = module.subnets.public_subnet_ids
 }
 
 # Create a security group for instances from the module

@@ -19,6 +19,6 @@ variable "placement_group_id" {
 }
 
 variable "public_subnet_ids" {
-  type        = list(string)
+  type        = map(string)
   description = "The IDs of the public subnets"
 }

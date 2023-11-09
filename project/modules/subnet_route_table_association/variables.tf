@@ -4,6 +4,6 @@ variable "route_table_id" {
 }
 
 variable "subnet_ids" {
-  type        = set(string)
+  type        = map(string)
   description = "The IDs of the subnets"
 }
