@@ -7,45 +7,7 @@ https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc
 
 ORDEM DE CRIAÇÃO
 
-VPC -> Subnets públicas para EC2 -> Subnet privada RDS -> Security Group -> Auto Scaling Group (Launch Template) (Criar com IP público se precisar) -> EC2 -> ALB Target Group (Configurar os Health checks) (Já apontando para as instâncias)
+VPC -> Subnets públicas para EC2 -> Subnet privada RDS -> Security Group -> 
+-> Auto Scaling Group (Launch Template) (Criar com IP público se precisar) -> 
+-> EC2 -> ALB Target Group (Configurar os Health checks) (Já apontando para as instâncias) ->
 -> ALB -> RDS -> Conexão com as EC2 criadas -> Bucket S3 para guardar estado do Terraform
-
-+ EC2
--> Nome: nome
--> Tag
--> AMI: Django Certified By Bitnami and Automattic
--> Tipo: t2.micro
--> Par de chaves: tem que criar antes e adicionar aqui
--> VPC: tem que criar antes
--> Security groups: tem que criar antes
-+ Auto Scalling Group
--> Nome: nome
--> Tag
--> Modelo de execução: tem que criar antes
-->
-->
--> 
-->
-->
--> 
-->
-->
--> 
-->
-->
--> 
-->
-->
--> 
-->
-->
-+ Modelo de execução Auto Scaling Group
--> Nome: nome
--> Tag
--> AMI: mesma do EC2
--> Tipo de instância: mesma do EC2
--> Par de chaves: mesma do EC2
--> Subrede:
--> Security group:
--> 
-->
