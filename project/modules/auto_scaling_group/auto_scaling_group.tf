@@ -3,7 +3,7 @@ resource "aws_autoscaling_group" "main" {
   max_size                  = 5
   min_size                  = 2
   desired_capacity          = 2
-  health_check_grace_period = 300
+  health_check_grace_period = 500
   health_check_type         = "ELB"
   vpc_zone_identifier       = values(var.public_subnet_ids)
   placement_group           = var.placement_group_id

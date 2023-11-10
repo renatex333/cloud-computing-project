@@ -74,14 +74,14 @@ module "route_table" {
   igw_id           = module.internet_gateway.igw_id
   route_table_name = "project-route-table"
   # cidr_block       = local.vpc_cidr_block
-  cidr_block       = "0.0.0.0/0"
+  cidr_block = "0.0.0.0/0"
 }
 
 # Create route table associations for public subnets from the module
 module "route_table_association" {
-  source           = "./modules/subnet_route_table_association"
-  route_table_id   = module.route_table.route_table_id
-  subnet_ids       = module.subnets.public_subnet_ids
+  source         = "./modules/subnet_route_table_association"
+  route_table_id = module.route_table.route_table_id
+  subnet_ids     = module.subnets.public_subnet_ids
 }
 
 # Create a security group for instances from the module
@@ -159,4 +159,14 @@ module "auto_scaling_group" {
   target_group_arns       = [module.alb_target_group.alb_target_group_arn]
   placement_group_id      = module.placement_group.placement_group_id
   public_subnet_ids       = module.subnets.public_subnet_ids
+}
+
+# Create a relational database from the module
+module "relational_database" {
+  source  = "./modules/relational_database"
+  db_name = "project-db"
+  db_allocated_storage = 20
+  db_max_allocated_storage = 100
+  db_engine = "mysql"
+  db_engine_version = "8.0"
 }
