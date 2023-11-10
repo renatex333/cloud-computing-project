@@ -26,6 +26,14 @@ resource "aws_security_group" "main" {
     cidr_blocks = var.security_group_ingress_cidr_blocks
   }
 
+  ingress {
+    description = "Allow all requests on port 3306"
+    from_port   = 3306
+    to_port     = 3306
+    protocol    = "TCP"
+    cidr_blocks = var.security_group_ingress_cidr_blocks
+  }
+
   egress {
     from_port   = 0
     to_port     = 0

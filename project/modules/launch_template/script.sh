@@ -78,6 +78,40 @@ urlpatterns = [
 ]
 " > "$PROJECT_DIR/project/urls.py"
 
+#############################################################
+# Change database!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+pip install djangorestframework
+
+echo "from django.db import models
+
+class Item(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField()
+
+    def __str__(self):
+        return self.name
+" > "$APP_DIR/models.py"
+
+/opt/bitnami/python/bin/python "$MANAGE_PY" makemigrations
+/opt/bitnami/python/bin/python "$MANAGE_PY" migrate
+
+touch "$APP_DIR/serializers.py"
+
+echo "from rest_framework import serializers
+from .models import Item
+
+class ItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Item
+        fields = ['id', 'name', 'description']
+" > "$APP_DIR/serializers.py"
+
+
+############################################################
+
+
+
 # Change DEBUG to False
 sed -i "s/DEBUG = True/DEBUG = False/" "$SETTINGS_FILE"
 

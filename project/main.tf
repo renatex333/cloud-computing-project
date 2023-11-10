@@ -12,6 +12,7 @@ locals {
   availability_zone_01 = "us-west-2a"
   availability_zone_02 = "us-west-2b"
   availability_zone_03 = "us-west-2c"
+  availability_zone_04 = "us-west-2d"
 }
 
 # Configure the AWS Provider
@@ -54,8 +55,14 @@ locals {
     },
     private_subnet_01 = {
       name              = "project-private-subnet-01"
-      availability_zone = local.availability_zone_01
+      availability_zone = local.availability_zone_03
       cidr_block        = "10.20.3.0/24"
+      map_public_ip     = false
+    }
+    private_subnet_02 = {
+      name              = "project-private-subnet-02"
+      availability_zone = local.availability_zone_04
+      cidr_block        = "10.20.4.0/24"
       map_public_ip     = false
     }
   }
@@ -73,8 +80,7 @@ module "route_table" {
   vpc_id           = module.vpc.vpc_id
   igw_id           = module.internet_gateway.igw_id
   route_table_name = "project-route-table"
-  # cidr_block       = local.vpc_cidr_block
-  cidr_block = "0.0.0.0/0"
+  cidr_block       = "0.0.0.0/0"
 }
 
 # Create route table associations for public subnets from the module
@@ -161,12 +167,30 @@ module "auto_scaling_group" {
   public_subnet_ids       = module.subnets.public_subnet_ids
 }
 
+# Create a relational database subnet group from the module
+module "relational_database_subnet_group" {
+  source               = "./modules/subnet_group"
+  db_subnet_group_name = "project-db-subnet-group"
+  private_subnet_ids   = module.subnets.private_subnet_ids
+}
+
 # Create a relational database from the module
 module "relational_database" {
-  source  = "./modules/relational_database"
-  db_name = "project-db"
-  db_allocated_storage = 20
-  db_max_allocated_storage = 100
-  db_engine = "mysql"
-  db_engine_version = "8.0"
+  source                   = "./modules/relational_database"
+  db_name                  = "projectdb"
+  db_allocated_storage     = 10
+  db_max_allocated_storage = 50
+  db_engine                = "mysql"
+  db_engine_version        = "8.0"
+  db_subnet_group_name     = module.relational_database_subnet_group.db_subnet_group_name
+  db_security_group_ids    = [module.databases_security_group.security_group_id]
 }
+
+output "db_endpoint" {
+  value = module.relational_database.db_endpoint
+}
+
+# Subir tudo e ver se consegue conectar com "mysql -h <endpoint> -P 3306 -u <mymasteruser> -p"
+# Precisa fazer com que os security groups sejam criados com regras individuais de ingresso
+# RDS só recebe conexões de dentro da VPC
+# Printar output do endpoint do banco de dados e do dns do load balancer
