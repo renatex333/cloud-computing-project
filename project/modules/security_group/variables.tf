@@ -8,7 +8,11 @@ variable "security_group_name" {
   description = "The name of the security group"
 }
 
-variable "security_group_ingress_cidr_blocks" {
-  type        = list(string)
-  description = "The list of CIDR blocks to allow ingress traffic from"
-} 
+variable "port_protocol_cidr" {
+  type = list(object({
+    port        = number
+    protocol    = string
+    cidr_blocks = list(string)
+  }))
+  description = "The list of port, protocol and CIDR blocks to allow ingress traffic from"
+}

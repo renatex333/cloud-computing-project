@@ -5,9 +5,16 @@ https://developer.hashicorp.com/terraform/tutorials/aws-get-started/aws-variable
 https://registry.terraform.io/providers/hashicorp/aws/latest/docs
 https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc
 
-ORDEM DE CRIAÇÃO
+O que falta?
 
-VPC -> Subnets públicas para EC2 -> Subnet privada RDS -> Security Group -> 
--> Auto Scaling Group (Launch Template) (Criar com IP público se precisar) -> 
--> EC2 -> ALB Target Group (Configurar os Health checks) (Já apontando para as instâncias) ->
--> ALB -> RDS -> Conexão com as EC2 criadas -> Bucket S3 para guardar estado do Terraform
+- Bucket S3 para guardar lock do estado do Terraform
+- aws_autoscaling_policy para métrica de CPUUtilization > 70% (aws_cloudwatch_metric_alarm)
+- backup_window e maintainance_window (argumentos) para RDS
+- Aplicação: CRUD e métricas + logs 
+- Elaborar um relatório detalhado com a previsão de custos, destacando os principais gastos e possíveis otimizações.
+    Utilizar a Calculadora de Custo da AWS para estimar os custos mensais da arquitetura proposta.
+    Considerar os custos de todos os recursos utilizados (EC2, ALB, RDS, etc.).
+- Criar uma documentação técnica que inclua um diagrama da arquitetura AWS.
+    Documentar todas as decisões técnicas tomadas e justificá-las.
+    Incluir um guia passo a passo para executar os scripts Terraform e validar a infraestrutura.
+    

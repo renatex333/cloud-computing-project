@@ -81,31 +81,31 @@ urlpatterns = [
 #############################################################
 # Change database!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-pip install djangorestframework
+# pip install djangorestframework
 
-echo "from django.db import models
+# echo "from django.db import models
 
-class Item(models.Model):
-    name = models.CharField(max_length=100)
-    description = models.TextField()
+# class Item(models.Model):
+#     name = models.CharField(max_length=100)
+#     description = models.TextField()
 
-    def __str__(self):
-        return self.name
-" > "$APP_DIR/models.py"
+#     def __str__(self):
+#         return self.name
+# " > "$APP_DIR/models.py"
 
-/opt/bitnami/python/bin/python "$MANAGE_PY" makemigrations
-/opt/bitnami/python/bin/python "$MANAGE_PY" migrate
+# /opt/bitnami/python/bin/python "$MANAGE_PY" makemigrations
+# /opt/bitnami/python/bin/python "$MANAGE_PY" migrate
 
-touch "$APP_DIR/serializers.py"
+# touch "$APP_DIR/serializers.py"
 
-echo "from rest_framework import serializers
-from .models import Item
+# echo "from rest_framework import serializers
+# from .models import Item
 
-class ItemSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Item
-        fields = ['id', 'name', 'description']
-" > "$APP_DIR/serializers.py"
+# class ItemSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Item
+#         fields = ['id', 'name', 'description']
+# " > "$APP_DIR/serializers.py"
 
 
 ############################################################

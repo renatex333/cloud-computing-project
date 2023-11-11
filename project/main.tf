@@ -58,7 +58,7 @@ locals {
       availability_zone = local.availability_zone_03
       cidr_block        = "10.20.3.0/24"
       map_public_ip     = false
-    }
+    },
     private_subnet_02 = {
       name              = "project-private-subnet-02"
       availability_zone = local.availability_zone_04
@@ -91,27 +91,51 @@ module "route_table_association" {
 }
 
 # Create a security group for instances from the module
+locals {
+  http_rule = {
+    port        = 80
+    protocol    = "TCP"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  application_rule = {
+    port        = 8000
+    protocol    = "TCP"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  ssh_rule = {
+    port        = 22
+    protocol    = "TCP"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  mysql_rule = {
+    port        = 3306
+    protocol    = "TCP"
+    cidr_blocks = tolist([for subnet_info in local.subnet_infos : subnet_info.cidr_block])
+
+  }
+}
 module "instances_security_group" {
-  source                             = "./modules/security_group"
-  vpc_id                             = module.vpc.vpc_id
-  security_group_name                = "project-instances-security-group"
-  security_group_ingress_cidr_blocks = ["0.0.0.0/0"]
+  source              = "./modules/security_group"
+  vpc_id              = module.vpc.vpc_id
+  security_group_name = "project-instances-security-group"
+  port_protocol_cidr  = [local.http_rule, local.application_rule, local.ssh_rule, local.mysql_rule]
 }
 
 # Create a security group for load balancers from the module
 module "load_balancers_security_group" {
-  source                             = "./modules/security_group"
-  vpc_id                             = module.vpc.vpc_id
-  security_group_name                = "project-load-balancers-security-group"
-  security_group_ingress_cidr_blocks = ["0.0.0.0/0"]
+  source              = "./modules/security_group"
+  vpc_id              = module.vpc.vpc_id
+  security_group_name = "project-load-balancers-security-group"
+  port_protocol_cidr  = [local.http_rule, local.application_rule]
+
 }
 
 # Create a security group for databases from the module
 module "databases_security_group" {
-  source                             = "./modules/security_group"
-  vpc_id                             = module.vpc.vpc_id
-  security_group_name                = "project-databases-security-group"
-  security_group_ingress_cidr_blocks = tolist([for subnet_info in local.subnet_infos : subnet_info.cidr_block])
+  source              = "./modules/security_group"
+  vpc_id              = module.vpc.vpc_id
+  security_group_name = "project-databases-security-group"
+  port_protocol_cidr  = [local.mysql_rule]
 }
 
 # Create a launch template from the module
@@ -190,7 +214,6 @@ output "db_endpoint" {
   value = module.relational_database.db_endpoint
 }
 
-# Subir tudo e ver se consegue conectar com "mysql -h <endpoint> -P 3306 -u <mymasteruser> -p"
-# Precisa fazer com que os security groups sejam criados com regras individuais de ingresso
-# RDS só recebe conexões de dentro da VPC
-# Printar output do endpoint do banco de dados e do dns do load balancer
+output "alb_dns_name" {
+  value = module.alb.alb_dns_name
+}

@@ -5,6 +5,8 @@ resource "aws_launch_template" "main" {
 
   instance_type = "t2.micro"
 
+  key_name = "teste"
+
   monitoring {
     enabled = true
   }

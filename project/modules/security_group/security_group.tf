@@ -2,36 +2,15 @@ resource "aws_security_group" "main" {
   name   = var.security_group_name
   vpc_id = var.vpc_id
 
-  ingress {
-    description = "Allow all requests on port 80"
-    from_port   = 80
-    to_port     = 80
-    protocol    = "TCP"
-    cidr_blocks = var.security_group_ingress_cidr_blocks
-  }
-
-  ingress {
-    description = "Allow all requests on port 8000"
-    from_port   = 8000
-    to_port     = 8000
-    protocol    = "TCP"
-    cidr_blocks = var.security_group_ingress_cidr_blocks
-  }
-
-  ingress {
-    description = "Allow all requests on port 22"
-    from_port   = 22
-    to_port     = 22
-    protocol    = "TCP"
-    cidr_blocks = var.security_group_ingress_cidr_blocks
-  }
-
-  ingress {
-    description = "Allow all requests on port 3306"
-    from_port   = 3306
-    to_port     = 3306
-    protocol    = "TCP"
-    cidr_blocks = var.security_group_ingress_cidr_blocks
+  dynamic "ingress" {
+    for_each = var.port_protocol_cidr
+    content {
+      description = "Allow all requests on port ${ingress.value.port}"
+      from_port   = ingress.value.port
+      to_port     = ingress.value.port
+      protocol    = ingress.value.protocol
+      cidr_blocks = ingress.value.cidr_blocks
+    }
   }
 
   egress {
