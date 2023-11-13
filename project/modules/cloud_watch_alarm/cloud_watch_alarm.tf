@@ -1,12 +1,13 @@
-resource "aws_cloudwatch_metric_alarm" "foobar" {
-  alarm_name                = "terraform-test-foobar5"
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
-  evaluation_periods        = 2
-  metric_name               = "CPUUtilization"
-  namespace                 = "AWS/EC2"
-  period                    = 120
+resource "aws_cloudwatch_metric_alarm" "main" {
+  alarm_name                = var.alarm_name
+  namespace                 = var.namespace
+  metric_name               = var.metric_name
   statistic                 = "Average"
-  threshold                 = 80
-  alarm_description         = "This metric monitors ec2 cpu utilization"
+  period                    = 300
+  comparison_operator       = var.comparison_operator
+  threshold                 = var.threshold
+  evaluation_periods        = 1
+  alarm_description         = "This metric monitors the auto-scaling group cpu utilization"
   insufficient_data_actions = []
+  alarm_actions             = [var.autoscaling_policy_arn]
 }

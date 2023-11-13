@@ -210,6 +210,26 @@ module "relational_database" {
   db_security_group_ids    = [module.databases_security_group.security_group_id]
 }
 
+# Create an auto scaling policy from the module
+module "auto_scaling_policy" {
+  source                  = "./modules/auto_scaling_policy"
+  auto_scaling_group_name = module.auto_scaling_group.auto_scaling_group_name
+  policy_name             = "project-auto-scaling-policy"
+  adjustment_type         = "ChangeInCapacity"
+  scaling_adjustment      = 1
+}
+
+# Create a cloud watch alarm from the module
+module "cloud_watch_alarm" {
+  source              = "./modules/cloud_watch_alarm"
+  alarm_name          = "project-cloud-watch-alarm"
+  namespace           = "AWS/EC2"
+  metric_name         = "CPUUtilization"
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  threshold           = 70
+  autoscaling_policy_arn = module.auto_scaling_policy.auto_scaling_policy_arn
+}
+
 output "db_endpoint" {
   value = module.relational_database.db_endpoint
 }

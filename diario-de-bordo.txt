@@ -8,7 +8,6 @@ https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc
 O que falta?
 
 - Bucket S3 para guardar lock do estado do Terraform
-- aws_autoscaling_policy para métrica de CPUUtilization > 70% (aws_cloudwatch_metric_alarm)
 - backup_window e maintainance_window (argumentos) para RDS
 - Aplicação: CRUD e métricas + logs 
 - Elaborar um relatório detalhado com a previsão de custos, destacando os principais gastos e possíveis otimizações.
