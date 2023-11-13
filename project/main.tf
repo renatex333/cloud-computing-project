@@ -230,6 +230,12 @@ module "cloud_watch_alarm" {
   autoscaling_policy_arn = module.auto_scaling_policy.auto_scaling_policy_arn
 }
 
+# Create a S3 bucket from the module
+module "s3_bucket" {
+  source     = "./modules/s3_bucket"
+  bucket_name = "project-s3-bucket"
+}
+
 output "db_endpoint" {
   value = module.relational_database.db_endpoint
 }

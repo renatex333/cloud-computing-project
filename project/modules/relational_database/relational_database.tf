@@ -14,4 +14,7 @@ resource "aws_db_instance" "main" {
   vpc_security_group_ids = var.db_security_group_ids
   publicly_accessible    = false
   skip_final_snapshot    = true
+  apply_immediately      = true
+  backup_window          = "07:00-09:00"
+  maintenance_window     = "Tue:04:00-Tue:04:30"
 }
