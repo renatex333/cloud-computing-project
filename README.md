@@ -6,7 +6,7 @@ Projeto de implementação de um ALB entre instâncias EC2 com Auto Scaling e Ba
 
 ## Objetivo de Implementação
 
-![diagrama de arquitetura](img/arquitetura.png)
+![diagrama de arquitetura](img/arquitetura-cloud.png)
 
 1. Infraestrutura como Código (IaC) com Terraform.
 2. Application Load Balancer (ALB).
