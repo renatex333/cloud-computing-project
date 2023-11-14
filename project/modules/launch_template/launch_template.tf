@@ -5,8 +5,6 @@ resource "aws_launch_template" "main" {
 
   instance_type = "t2.micro"
 
-  key_name = "teste"
-
   monitoring {
     enabled = true
   }
@@ -25,5 +23,5 @@ resource "aws_launch_template" "main" {
     }
   }
 
-  user_data = filebase64("${path.module}/script.sh")
+  user_data = base64encode(templatefile("${path.module}/script.tftpl", { hostname = var.hostname }))
 }

@@ -138,6 +138,25 @@ module "databases_security_group" {
   port_protocol_cidr  = [local.mysql_rule]
 }
 
+# Create a relational database subnet group from the module
+module "relational_database_subnet_group" {
+  source               = "./modules/subnet_group"
+  db_subnet_group_name = "project-db-subnet-group"
+  private_subnet_ids   = module.subnets.private_subnet_ids
+}
+
+# Create a relational database from the module
+module "relational_database" {
+  source                   = "./modules/relational_database"
+  db_name                  = "projectdb"
+  db_allocated_storage     = 10
+  db_max_allocated_storage = 50
+  db_engine                = "mysql"
+  db_engine_version        = "8.0"
+  db_subnet_group_name     = module.relational_database_subnet_group.db_subnet_group_name
+  db_security_group_ids    = [module.databases_security_group.security_group_id]
+}
+
 # Create a launch template from the module
 locals {
   # Django by Bitnami (Linux Debian 11 - x86-64) 
@@ -150,6 +169,7 @@ module "launch_template" {
   security_group_ids   = [module.instances_security_group.security_group_id]
   availability_zone    = local.availability_zone_01
   image_id             = local.ami_id
+  hostname             = module.relational_database.db_address
 }
 
 # Create a load balancer target group from the module
@@ -191,25 +211,6 @@ module "auto_scaling_group" {
   public_subnet_ids       = module.subnets.public_subnet_ids
 }
 
-# Create a relational database subnet group from the module
-module "relational_database_subnet_group" {
-  source               = "./modules/subnet_group"
-  db_subnet_group_name = "project-db-subnet-group"
-  private_subnet_ids   = module.subnets.private_subnet_ids
-}
-
-# Create a relational database from the module
-module "relational_database" {
-  source                   = "./modules/relational_database"
-  db_name                  = "projectdb"
-  db_allocated_storage     = 10
-  db_max_allocated_storage = 50
-  db_engine                = "mysql"
-  db_engine_version        = "8.0"
-  db_subnet_group_name     = module.relational_database_subnet_group.db_subnet_group_name
-  db_security_group_ids    = [module.databases_security_group.security_group_id]
-}
-
 # Create an auto scaling policy from the module
 module "auto_scaling_policy" {
   source                  = "./modules/auto_scaling_policy"
@@ -221,24 +222,24 @@ module "auto_scaling_policy" {
 
 # Create a cloud watch alarm from the module
 module "cloud_watch_alarm" {
-  source              = "./modules/cloud_watch_alarm"
-  alarm_name          = "project-cloud-watch-alarm"
-  namespace           = "AWS/EC2"
-  metric_name         = "CPUUtilization"
-  comparison_operator = "GreaterThanOrEqualToThreshold"
-  threshold           = 70
+  source                 = "./modules/cloud_watch_alarm"
+  alarm_name             = "project-cloud-watch-alarm"
+  namespace              = "AWS/EC2"
+  metric_name            = "CPUUtilization"
+  comparison_operator    = "GreaterThanOrEqualToThreshold"
+  threshold              = 70
   autoscaling_policy_arn = module.auto_scaling_policy.auto_scaling_policy_arn
 }
 
 # Create a S3 bucket from the module
 module "s3_bucket" {
-  source     = "./modules/s3_bucket"
+  source      = "./modules/s3_bucket"
   bucket_name = "project-s3-bucket"
 }
 
-output "db_endpoint" {
-  value = module.relational_database.db_endpoint
-}
+# output "db_endpoint" {
+#   value = module.relational_database.db_address
+# }
 
 output "alb_dns_name" {
   value = module.alb.alb_dns_name

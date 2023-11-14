@@ -17,3 +17,8 @@ variable "image_id" {
   type        = string
   description = "The ID of the image"
 }
+
+variable "hostname" {
+  type        = string
+  description = "The hostname of the database"
+}

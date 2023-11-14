@@ -14,4 +14,6 @@ O que falta?
 - Criar uma documentação técnica que inclua um diagrama da arquitetura AWS.
     Documentar todas as decisões técnicas tomadas e justificá-las.
     Incluir um guia passo a passo para executar os scripts Terraform e validar a infraestrutura.
+
+## VERIFICAR ARQUIVOS E REMOVER INUTILIDADES
     
