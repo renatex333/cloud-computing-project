@@ -237,10 +237,6 @@ module "s3_bucket" {
   bucket_name = "project-s3-bucket"
 }
 
-# output "db_endpoint" {
-#   value = module.relational_database.db_address
-# }
-
-output "alb_dns_name" {
-  value = module.alb.alb_dns_name
+output "Application URL ->" {
+  value = "http://${module.alb.alb_dns_name}"
 }
