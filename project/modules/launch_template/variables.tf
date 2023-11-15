@@ -22,3 +22,13 @@ variable "hostname" {
   type        = string
   description = "The hostname of the database"
 }
+
+variable "username" {
+  type        = string
+  description = "The username of the database"
+}
+
+variable "password" {
+  type        = string
+  description = "The password of the database"
+}

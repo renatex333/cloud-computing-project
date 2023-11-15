@@ -32,3 +32,13 @@ variable "db_security_group_ids" {
   type        = list(string)
   description = "The security group ids to use"
 }
+
+variable "db_username" {
+  type        = string
+  description = "The username for the database"
+}
+
+variable "db_password" {
+  type        = string
+  description = "The password for the database"
+}

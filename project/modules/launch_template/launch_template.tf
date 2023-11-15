@@ -23,5 +23,5 @@ resource "aws_launch_template" "main" {
     }
   }
 
-  user_data = base64encode(templatefile("${path.module}/script.tftpl", { hostname = var.hostname }))
+  user_data = base64encode(templatefile("${path.module}/script.tftpl", { hostname = var.hostname, username = var.username, password = var.password }))
 }

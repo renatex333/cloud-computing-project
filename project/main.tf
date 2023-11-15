@@ -155,6 +155,8 @@ module "relational_database" {
   db_engine_version        = "8.0"
   db_subnet_group_name     = module.relational_database_subnet_group.db_subnet_group_name
   db_security_group_ids    = [module.databases_security_group.security_group_id]
+  db_username              = var.db_username
+  db_password              = var.db_password
 }
 
 # Create a launch template from the module
@@ -170,6 +172,8 @@ module "launch_template" {
   availability_zone    = local.availability_zone_01
   image_id             = local.ami_id
   hostname             = module.relational_database.db_address
+  username             = var.db_username
+  password             = var.db_password
 }
 
 # Create a load balancer target group from the module
@@ -235,8 +239,4 @@ module "cloud_watch_alarm" {
 module "s3_bucket" {
   source      = "./modules/s3_bucket"
   bucket_name = "project-s3-bucket"
-}
-
-output "Application URL ->" {
-  value = "http://${module.alb.alb_dns_name}"
 }
