@@ -90,9 +90,8 @@ Por fim, execute o seguinte comando no diretório raiz deste repositório:
 
         ./deploy.sh
 
-- Windows
-
-        bash deploy.sh
+> [!IMPORTANTE]  
+> Os scripts `deploy.sh` e `destroy.sh` funcionam apenas em sistemas operacionais Linux.
 
 Ao executar o comando, é necessário definir duas variáveis:
 
@@ -109,10 +108,6 @@ Quando desejar finalizar a infraestrutura, liberando todos os recursos alocados,
 - Linux
 
         ./destroy.sh
-
-- Windows
-
-        bash destroy.sh
 
 ## Análise de custos
 
