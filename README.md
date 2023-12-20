@@ -1,4 +1,156 @@
-# Projeto de Computação em Nuvem - 2023.2
+# Cloud Computing Project - 2023.2 [EN-US]
+
+Project for the implementation of an ALB between EC2 instances with Auto Scaling and RDS Database
+
+**By: Renato Laffranchi Falcão**
+
+## Implementation Objective
+
+![architecture diagram](img/infrastructure_diagram.png)
+
+1. Infrastructure as Code (IaC) with Terraform.
+2. Application Load Balancer (ALB).
+3. EC2 with Auto Scaling.
+4. RDS Database.
+5. Application.
+6. Cost Analysis with the AWS Calculator.
+7. Documentation.
+
+### Technical Detailing
+
+The project was developed in Terraform, a tool for infrastructure as code (IaC) development, managing instances and services from various providers, like AWS. The project directory is structured as follows:
+
+    .
+    ├── project/
+    │   ├── main.tf
+    │   ├── outputs.tf
+    │   └── modules/
+    │       ├── alb_listener/
+    │       ├── alb_target_group/
+    │       ├── application_load_balancer/
+    │       ├── auto_scaling_group/
+    │       ├── auto_scaling_policy/
+    │       ├── cloud_watch_alarm/
+    │       ├── internet_gateway/
+    │       ├── launch_template/
+    │       ├── placement_group/
+    │       ├── relational_database/
+    │       ├── route_table/
+    │       ├── s3_bucket/
+    │       ├── security_group/
+    │       ├── subnet_group/
+    │       ├── subnet_route_table_association/
+    │       ├── subnets/
+    │       └── vpc/
+    ├── docs/
+    │   └── cost-estimate.pdf
+    ├── img/
+    │   └── cloud-architecture.png
+    └── deploy.sh
+
+In this directory structure, all the Terraform code is inside the `project/` folder. The `main.tf` file contains the main connection between AWS resources, responsible for deploying the entire infrastructure. The `outputs.tf` file displays the application access URL through the browser to the user.
+
+The `modules/` folder, also inside this directory, contains all the resources needed to deploy the application, separated by component. This modular organization is efficient for abstracting certain resource details and allowing reuse. All modules are used by the main program, with arguments passed to the modules facilitating resource connection and making the code easier to update and maintain.
+
+Here are some important technical details about the provided Terraform code:
+
+1. **Subnet Configuration**: The code defines two public and two private subnets, each in different availability zones. This not only distributes the load and improves resilience but also allows traffic segregation between public and private resources, like database instances and web servers.
+
+2. **Security Groups and Rules**: Security groups are set up for different resources, like instances, load balancers, and databases. Defined rules allow specific traffic (e.g., HTTP, SSH, MySQL) from/to defined IP address blocks, ensuring only necessary and secure traffic is permitted, which is crucial for network security.
+
+3. **Database Credential Management**: The database username and password are managed through variables, suggesting a secure and centralized method of credential management, essential for database security and maintenance.
+
+4. **Django Image Choice for Launch Template**: The selected AMI is specific to Django (Bitnami with Linux Debian 11 - x86-64), indicating an optimized, ready-to-use configuration for Django applications, ensuring efficiency and stability. The image also receives regular updates, always ensuring the latest stable version of all components.
+
+5. **Auto Scaling Group**: Configuration of an auto scaling group to manage the dynamic scalability of EC2 instances in response to changes in demand or performance. Specifically, this scalability is triggered by high CPU usage, monitored through a CloudWatch alarm.
+
+6. **Load Balancing (ALB)**: Implementation of an Application Load Balancer, helping to distribute incoming traffic to improve application availability and robustness.
+
+7. **Monitoring and Alerts with CloudWatch**: Creation of a CloudWatch alarm to monitor CPU usage and trigger auto scaling policies, ensuring efficient resource management.
+
+8. **S3 Storage**: Use of an S3 bucket for object storage, providing a secure and effective way to store and access data. In this case, the bucket is used to store the Terraform state.
+
+These components together form a robust and scalable infrastructure in AWS, ideal for supporting modern web applications with complex network, security, and performance requirements.
+
+### Infrastructure Deployment
+
+Before deploying, it is necessary to install Terraform. Simply follow the [Terraform installation tutorial](https://developer.hashicorp.com/terraform/downloads) according to the operating system. In addition to Terraform, it is also necessary to install the [AWS CLI](https://aws.amazon.com/pt/cli/) according to the operating system.
+
+With both dependencies installed, AWS credentials must be configured for Terraform to manage everything independently. One of the safest ways to manage AWS development credentials, to prevent leakage, is to set them as environment variables on the computer, so they are not shared. Using the
+
+ command:
+
+    aws configure
+
+- `AWS Access Key ID` and `AWS Secret Access Key ID`: The **ID** and **access key** generated in the AWS console, under the *"Security Credentials"* tab.
+- `Default region name`: The default region for deploying services and instances. It can be left blank, but the region being used is **us-west-2**.
+- `Default output format`: The default output format for responses received. It can be left blank.
+
+Finally, execute the following command in the root directory of this repository:
+
+- Linux
+
+        ./deploy.sh
+
+> [!IMPORTANT]  
+> The `deploy.sh` and `destroy.sh` scripts only work on Linux operating systems.
+
+When running the command, two variables must be defined:
+
+- `Database Username` and `Database Password`: The user and password, respectively, for database access.
+
+Now just make some tea while waiting for the infrastructure deployment to finish... :tea:
+
+Once finished, the URL for testing the application will be displayed in the terminal.
+
+### Infrastructure Shutdown
+
+When you wish to terminate the infrastructure, releasing all allocated resources, simply execute the following command:
+
+- Linux
+
+        ./destroy.sh
+
+## Cost Analysis
+
+The detailed report on the cost estimate, prepared with the support of the official Amazon Web Services (AWS) price calculator, is available in the file `docs/cost-estimate.pdf`.
+
+The proposal aims to deploy the infrastructure in the **us-west-2** region of AWS, a strategic decision that balances cost and performance. This region not only offers competitive prices but also ensures low latency, essential for a nimble user experience and efficient service.
+
+A general analysis indicates that the estimated monthly cost is approximately *$65.39 USD*. This amount is composed of the following main costs, broken down by resource:
+
+- Instances (EC2):
+    - Data transfer: *$11.00 USD*
+- Private cloud (VPC):
+    - Data transfer: *$11.00 USD*
+- Load Balancer (ALB):
+    - ALB instance: *$16.43 USD*
+
+It can be noted that data transfer prices, whether intraregional or to the internet, are the factor that most adds cost. For this estimate, 100 GB per month of intraregional traffic (i.e., data traveling between the instance and the database) and 100 GB per month of traffic leaving the VPC (i.e., to the internet, like responses to clients) were considered.
+
+The value for data traffic was chosen arbitrarily but reveals that careful application development is extremely important to reduce the operational costs of cloud infrastructure. Therefore, the main optimization to consider is the continuous improvement of data transmission efficiency by the application. Among the optimizations that can be implemented are:
+
+- **Data Compression**: Reducing the size of transmitted data, which decreases the bandwidth needed.
+- **Intelligent Caching**: Storing data locally to avoid repetitive transmissions.
+- **Use of Efficient Communication Protocols**: Selecting protocols that optimize data transmission.
+- **Database Query Optimization**: Ensuring that queries are efficient and consume fewer resources.
+
+These measures, when implemented, not only reduce the operational costs associated with data traffic but also improve the speed and responsiveness of the application for users.
+
+Another point of attention in the current scenario, where the test application is running on AWS, is the use of lower-cost EC2 instances, suitable for low computational resource demand. However, when transitioning to an application in a production environment, a significant increase in computational resource requirements is expected. This will necessitate more advanced EC2 instances capable of handling more intense workloads. This change will lead to a noticeable increase in costs associated with EC2 instances. Therefore, it is crucial to consider the scalability of costs with more robust infrastructure in budget planning, as growth in demand and application performance tends to proportionally increase operational costs.
+
+## References
+
+AWS Architecture Blog. (2021). [What to Consider when Selecting a Region for your Workloads](https://aws.amazon.com/pt/blogs/architecture/what-to-consider-when-selecting-a-region-for-your-workloads/).
+
+HashiCorp Terraform Registry. (2023). [AWS provider documentation](https://registry.terraform.io/providers/hashicorp/aws/latest/docs).
+
+HashiCorp. (2023). [Terraform documentation](https://developer.hashicorp.com/terraform).
+
+Amazon AWS. (2023). [AWS pricing calculator](https://calculator.aws/#/).
+
+
+# Projeto de Computação em Nuvem - 2023.2 [PT-BR]
 
 Projeto de implementação de um ALB entre instâncias EC2 com Auto Scaling e Banco de dados RDS
 
@@ -6,7 +158,7 @@ Projeto de implementação de um ALB entre instâncias EC2 com Auto Scaling e Ba
 
 ## Objetivo de Implementação
 
-![diagrama de arquitetura](img/arquitetura-cloud.png)
+![diagrama de arquitetura](img/infrastructure_diagram.png)
 
 1. Infraestrutura como Código (IaC) com Terraform.
 2. Application Load Balancer (ALB).
@@ -146,4 +298,3 @@ HashiCorp Terraform Registry. (2023). [AWS provider documentation](https://regis
 HashiCorp. (2023). [Terraform documentation](https://developer.hashicorp.com/terraform).
 
 Amazon AWS. (2023). [AWS pricing calculator](https://calculator.aws/#/).
-
